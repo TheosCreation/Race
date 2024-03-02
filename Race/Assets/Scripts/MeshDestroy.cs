@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 //https://www.youtube.com/watch?v=VwGiwDLQ40A
 public class MeshDestroy : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class MeshDestroy : MonoBehaviour
     private Plane edgePlane = new Plane();
     public int CutCascades = 1;
     public float ExplodeForce = 0;
+    public GameObject Player;
+    bool destroyed = false;
 
     // Start is called before the first frame update
     void Start()
@@ -21,13 +24,15 @@ public class MeshDestroy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void OnCollisionEnter(Collision collision)
     {
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (collision.gameObject.CompareTag("Player")&&!destroyed) {
+            Player = collision.gameObject;
+            destroyed = true;
             DestroyMesh();
         }
     }
+
 
     private void DestroyMesh()
     {
@@ -269,6 +274,7 @@ public class MeshDestroy : MonoBehaviour
 
         public void MakeGameobject(MeshDestroy original)
         {
+            var playerRB = original.Player.GetComponent<Rigidbody>();
             GameObject = new GameObject(original.name);
             GameObject.transform.position = original.transform.position;
             GameObject.transform.rotation = original.transform.rotation;
@@ -294,10 +300,15 @@ public class MeshDestroy : MonoBehaviour
             collider.convex = true;
 
             var rigidbody = GameObject.AddComponent<Rigidbody>();
-            var meshDestroy = GameObject.AddComponent<MeshDestroy>();
-            meshDestroy.CutCascades = original.CutCascades;
-            meshDestroy.ExplodeForce = original.ExplodeForce;
-          
+            rigidbody.mass = 0.1f;
+            rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            Vector3 ranV3 = new Vector3(UnityEngine.Random.Range(1, 5), UnityEngine.Random.Range(1, 5), UnityEngine.Random.Range(1, 5));
+            rigidbody.velocity = Vector3.Scale(playerRB.velocity, ranV3);
+            rigidbody.drag = 0.1f;    
+           /* var meshDestroy = GameObject.AddComponent<MeshDestroy>();
+            meshDestroy.CutCascades = 0;
+            meshDestroy.ExplodeForce = 0;*/
+
 
         }
 
