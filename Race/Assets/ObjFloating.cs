@@ -4,17 +4,11 @@ using UnityEngine;
 
 public class ObjFloating : MonoBehaviour
 {
-    public GameObject TimeSystem;
-    protected TimeSystem t;
+    private TimeSystem t;
     // Start is called before the first frame update
     void Start()
     {
-        if (transform.parent != null) {
-            t = GetComponentInParent<ObjFloating>().t;
-        }
-        else { 
-            t = TimeSystem.GetComponent<TimeSystem>();
-        }
+        t = GetComponentInParent<TimeSystem>();
     }
 
     // Update is called once per frame
